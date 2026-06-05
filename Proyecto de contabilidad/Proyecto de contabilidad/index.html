@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Contable - Mi Primera Empresa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">M</div>
+            <div class="logo-text">
+                <h1>Primera Empresa</h1>
+                <p>ERP Contable Web</p>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-tab="crear-partida">
+                <span class="nav-item-icon">📝</span>
+                <span>Crear Partida</span>
+            </div>
+            <div class="nav-item" data-tab="diario">
+                <span class="nav-item-icon">📖</span>
+                <span>Libro Diario</span>
+            </div>
+            <div class="nav-item" data-tab="mayor">
+                <span class="nav-item-icon">📊</span>
+                <span>Libro Mayor</span>
+            </div>
+            <div class="nav-item" data-tab="balance-saldos">
+                <span class="nav-item-icon">⚖️</span>
+                <span>Balance de Saldos</span>
+            </div>
+            <div class="nav-item" data-tab="resultados">
+                <span class="nav-item-icon">📈</span>
+                <span>Estado de Resultados</span>
+            </div>
+            <div class="nav-item" data-tab="balance-general">
+                <span class="nav-item-icon">🏛️</span>
+                <span>Balance General</span>
+            </div>
+            <div class="nav-item" data-tab="catalogo">
+                <span class="nav-item-icon">📁</span>
+                <span>Catálogo de Cuentas</span>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <p>Sistemas Contables v2.0</p>
+            <p style="color: var(--color-primary); font-size: 9px; margin-top: 4px;">Guatemala, 2026</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="content-area">
+        <header class="top-header">
+            <h2 id="current-tab-title">Crear Partida Contable</h2>
+            <div class="user-badge">
+                <span class="user-status-dot"></span>
+                <span>Base de Datos Virtual: Conectado</span>
+            </div>
+        </header>
+        
+        <div class="content-body">
+            
+            <!-- 1. TAB: CREAR PARTIDA -->
+            <div class="tab-pane active" id="tab-crear-partida">
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Registrar Nuevo Asiento Contable</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Completa las filas del asiento diario</span>
+                    </div>
+                    
+                    <form id="entry-form">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label for="entry-date">Fecha de Transacción</label>
+                                <input type="date" id="entry-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="entry-description">Glosa / Concepto del Asiento</label>
+                                <input type="text" id="entry-description" placeholder="Ej. Venta de mercaderías al contado según factura No. 12" required>
+                            </div>
+                        </div>
+                        
+                        <div class="data-table-container" style="margin-bottom: 20px;">
+                            <table class="entry-creator-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50%;">Nombre de la Cuenta</th>
+                                        <th style="width: 22%; text-align: right;">Debe (Q)</th>
+                                        <th style="width: 22%; text-align: right;">Haber (Q)</th>
+                                        <th style="width: 6%; text-align: center;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="entry-rows-container">
+                                    <!-- Dynamic rows will be inserted here via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Real-time Validation Bar -->
+                        <div class="balance-status-bar" id="balance-status-bar">
+                            <div class="balance-totals">
+                                <div class="balance-total-item">
+                                    <span class="balance-total-label">Total Debe</span>
+                                    <span class="balance-total-value" id="total-debe-val">Q0.00</span>
+                                </div>
+                                <div class="balance-total-item">
+                                    <span class="balance-total-label">Total Haber</span>
+                                    <span class="balance-total-value" id="total-haber-val">Q0.00</span>
+                                </div>
+                                <div class="balance-total-item">
+                                    <span class="balance-total-label">Diferencia</span>
+                                    <span class="balance-total-value" id="total-diff-val">Q0.00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="balance-indicator unbalanced" id="balance-indicator">
+                                Descuadrado ❌
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <button type="button" class="btn btn-secondary" id="btn-add-row">➕ Agregar Fila</button>
+                            <button type="button" class="btn btn-secondary" id="btn-reset-form">🔄 Limpiar</button>
+                            <button type="submit" class="btn btn-success" id="btn-save-entry" disabled>💾 Guardar Partida</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 2. TAB: LIBRO DIARIO -->
+            <div class="tab-pane" id="tab-diario">
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Asientos Diarios Registrados</h3>
+                        <button class="btn btn-primary" id="btn-clear-diary" style="padding: 6px 12px; font-size: 12px;">🗑️ Borrar Historial</button>
+                    </div>
+                    <div id="journal-entries-list">
+                        <!-- Entries list will be generated here -->
+                        <p style="color: var(--text-muted); text-align: center; padding: 40px 0;">No hay partidas registradas aún. ¡Crea una en la pestaña anterior!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. TAB: LIBRO MAYOR -->
+            <div class="tab-pane" id="tab-mayor">
+                <!-- Print-only header -->
+                <div class="print-only-header" style="display: none;">
+                    <h1 style="color: #000; font-size: 22px; margin-bottom: 5px; text-align: center;">Mi Primera Empresa</h1>
+                    <h2 style="color: #444; font-size: 16px; margin-bottom: 5px; text-align: center;">Libro Mayor Auxiliar</h2>
+                    <p style="color: #111; font-size: 13px; text-align: center;" id="print-account-info">Cuenta: [Código] Nombre</p>
+                    <p style="color: #555; font-size: 11px; text-align: center;">Fecha de emisión: <span id="print-date"></span></p>
+                    <hr style="border: 0; border-top: 1px solid #000; margin: 15px 0;">
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Mayor Auxiliar Interactivo</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Historial detallado por cuenta</span>
+                    </div>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
+                        <div class="form-group" style="margin-bottom: 0; min-width: 280px; flex: 1;">
+                            <label for="mayor-account-select" style="display: block; margin-bottom: 8px;">Seleccionar Cuenta Contable</label>
+                            <select id="mayor-account-select" style="width: 100%; cursor: pointer;">
+                                <!-- Cuentas se cargan dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="data-table-container">
+                        <table class="data-table" id="mayor-auxiliar-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 12%;">Fecha</th>
+                                    <th style="width: 12%;">N° Partida</th>
+                                    <th style="width: 38%;">Concepto / Glosa</th>
+                                    <th style="width: 12%; text-align: right;">Debe (Q)</th>
+                                    <th style="width: 12%; text-align: right;">Haber (Q)</th>
+                                    <th style="width: 14%; text-align: right;">Saldo Acumulado (Q)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mayor-table-body">
+                                <!-- Generated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <style>
+                @media print {
+                    body {
+                        background: #ffffff !important;
+                        color: #000000 !important;
+                        overflow: visible !important;
+                        height: auto !important;
+                        font-family: 'Arial', sans-serif !important;
+                    }
+                    aside.sidebar, header.top-header, .btn, .card-title-bar, label, #mayor-account-select, .sidebar-footer, div[style*="border-bottom"] {
+                        display: none !important;
+                    }
+                    main.content-area {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        height: auto !important;
+                        width: 100% !important;
+                        overflow: visible !important;
+                    }
+                    .content-body {
+                        padding: 0 !important;
+                        background: none !important;
+                        overflow: visible !important;
+                    }
+                    .tab-pane {
+                        display: none !important;
+                    }
+                    .tab-pane#tab-mayor {
+                        display: block !important;
+                    }
+                    .glass-card {
+                        background: none !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                    .data-table-container {
+                        border: 1px solid #000000 !important;
+                        background: none !important;
+                        overflow: visible !important;
+                        border-radius: 0 !important;
+                    }
+                    .data-table {
+                        width: 100% !important;
+                        color: #000000 !important;
+                        border-collapse: collapse !important;
+                    }
+                    .data-table th {
+                        background-color: #f3f4f6 !important;
+                        color: #000000 !important;
+                        border: 1px solid #000000 !important;
+                        font-weight: bold !important;
+                        padding: 8px !important;
+                        font-size: 10pt !important;
+                        text-align: left !important;
+                    }
+                    .data-table td {
+                        color: #000000 !important;
+                        border: 1px solid #dddddd !important;
+                        padding: 8px !important;
+                        font-size: 10pt !important;
+                    }
+                    .debit-val { color: #000000 !important; }
+                    .credit-val { color: #000000 !important; }
+                    .total-row td {
+                        border-bottom: 3px double #000000 !important;
+                        border-top: 2px solid #000000 !important;
+                        background-color: #fafafa !important;
+                        font-weight: bold !important;
+                    }
+                    .print-only-header {
+                        display: block !important;
+                    }
+                }
+                </style>
+            </div>
+            
+            <!-- 4. TAB: BALANCE DE SALDOS -->
+            <div class="tab-pane" id="tab-balance-saldos">
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Balance de Saldos</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Comprobación automática de sumas y saldos</span>
+                    </div>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">Código</th>
+                                    <th style="width: 45%;">Cuenta</th>
+                                    <th style="width: 20%; text-align: right;">Saldo Deudor (Q)</th>
+                                    <th style="width: 20%; text-align: right;">Saldo Acreedor (Q)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="saldos-table-body">
+                                <!-- Generated via JS -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="2">Suma Total</td>
+                                    <td class="monto" id="saldos-total-deudor">Q0.00</td>
+                                    <td class="monto" id="saldos-total-acreedor">Q0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5. TAB: ESTADO DE RESULTADOS -->
+            <div class="tab-pane" id="tab-resultados">
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Estado de Resultados</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Evaluación de rendimiento del periodo</span>
+                    </div>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60%;">Concepto / Cuenta</th>
+                                    <th style="width: 40%; text-align: right;">Monto (Q)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultados-table-body">
+                                <!-- Generated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 6. TAB: BALANCE GENERAL -->
+            <div class="tab-pane" id="tab-balance-general">
+                <!-- Print-only header -->
+                <div class="print-only-header" style="display: none;">
+                    <h1 style="color: #000; font-size: 22px; margin-bottom: 5px; text-align: center;">Mi Primera Empresa</h1>
+                    <h2 style="color: #444; font-size: 16px; margin-bottom: 5px; text-align: center;">Balance General</h2>
+                    <p style="color: #555; font-size: 11px; text-align: center;">Fecha de emisión: <span id="print-bg-date"></span></p>
+                    <hr style="border: 0; border-top: 1px solid #000; margin: 15px 0;">
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Balance General</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Ecuación fundamental: Activo = Pasivo + Patrimonio</span>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
+                        <button type="button" class="btn btn-secondary" id="btn-bg-export-excel" style="padding: 10px 16px;">
+                            📊 Exportar a Excel
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-bg-export-word" style="padding: 10px 16px;">
+                            📝 Exportar a Word
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn-bg-export-pdf" style="padding: 10px 16px;">
+                            🖨️ Imprimir / PDF
+                        </button>
+                    </div>
+
+                    <div class="data-table-container">
+                        <table class="data-table" id="balance-general-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60%;">Estructura Contable</th>
+                                    <th style="width: 40%; text-align: right;">Monto (Q)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="general-table-body">
+                                <!-- Generated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. TAB: CATALOGO -->
+            <div class="tab-pane" id="tab-catalogo">
+                <div class="glass-card">
+                    <div class="card-title-bar">
+                        <h3>Cuentas en el Catálogo</h3>
+                        <button class="btn btn-primary" id="btn-open-account-modal">➕ Nueva Cuenta</button>
+                    </div>
+                    <div class="catalog-grid" id="catalog-accounts-grid">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- MODAL OVERLAY: ADD NEW ACCOUNT -->
+    <div class="modal-overlay" id="account-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Crear Nueva Cuenta</h3>
+                <button class="modal-close" id="btn-close-account-modal">&times;</button>
+            </div>
+            <form id="new-account-form">
+                <div class="form-group">
+                    <label for="acct-code">Código de Cuenta</label>
+                    <input type="number" id="acct-code" placeholder="Ej. 109" min="100" max="999" required>
+                    <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Sugeridos: Activo (100s), Pasivo (200s), Patrimonio (300s), Pérdida (400s), Ganancia (500s)</p>
+                </div>
+                <div class="form-group">
+                    <label for="acct-name">Nombre de Cuenta</label>
+                    <input type="text" id="acct-name" placeholder="Ej. Caja Chica" required>
+                </div>
+                <div class="form-group">
+                    <label for="acct-type">Tipo de Cuenta</label>
+                    <select id="acct-type" required>
+                        <option value="" disabled selected>Selecciona el tipo...</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Pasivo">Pasivo</option>
+                        <option value="Patrimonio">Patrimonio</option>
+                        <option value="Pérdida">Pérdida (Gasto)</option>
+                        <option value="Ganancia">Ganancia (Ingreso)</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-account">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN ENGINE -->
+    <script src="app.js"></script>
+</body>
+</html>
